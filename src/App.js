@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import twitterLogo from './assets/twitter-logo.svg';
-
+import enderDragon from './assets/teleport-ender-dragon.gif';
 // Constants
 const TWITTER_HANDLE = 'cranriquez';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
@@ -87,10 +87,7 @@ const App = () => {
           <p className="sub-text">Team up to free the Ender Metaverse from dragons!</p>
         </div>
         <div className="connect-wallet-container">
-          <img
-            src="https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv"
-            alt="Monty Python Gif"
-          />
+          <img className="ender-dragon" src={enderDragon} alt="ender-dragon"/>
             {/*
              * Button that we will use to trigger wallet connect
              * Don't forget to add the onClick event to call your method!
