@@ -46,6 +46,35 @@ const App = () => {
     }
   };
 
+  /*
+  * Implement your connectWallet method here
+  */
+  const connectWalletAction = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        alert('Get MetaMask!');
+        return;
+      }
+
+      /*
+        * Fancy method to request access to account.
+        */
+      const accounts = await ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+
+      /*
+        * Boom! This should print out public address once we authorize Metamask.
+        */
+      console.log('Connected', accounts[0]);
+      setCurrentAccount(accounts[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
@@ -62,6 +91,16 @@ const App = () => {
             src="https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv"
             alt="Monty Python Gif"
           />
+            {/*
+             * Button that we will use to trigger wallet connect
+             * Don't forget to add the onClick event to call your method!
+             */}
+             <button
+              className="cta-button connect-wallet-button"
+              onClick={connectWalletAction}
+            >
+              Connect Wallet To Get Started
+            </button>
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
