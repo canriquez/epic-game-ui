@@ -8,26 +8,44 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   /*
-   * Start by creating a new action that we will run on component load
+   * Just a state variable we use to store our user's public wallet. Don't forget to import useState.
    */
-  // Actions
-  const checkIfWalletIsConnected = () => {
-    /*
-     * First make sure we have access to window.ethereum
-     */
-    const { ethereum } = window;
+  const [currentAccount, setCurrentAccount] = useState(null);
 
-    if (!ethereum) {
-      console.log('Make sure you have MetaMask!');
-      return;
-    } else {
-      console.log('We have the ethereum object', ethereum);
+  /*
+   * Since this method will take some time, make sure to declare it as async
+   */
+  const checkIfWalletIsConnected = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        console.log('Make sure you have MetaMask!');
+        return;
+      } else {
+        console.log('We have the ethereum object', ethereum);
+
+        /*
+         * Check if we're authorized to access the user's wallet
+         */
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+        /*
+         * User can have multiple authorized accounts, we grab the first one if its there!
+         */
+        if (accounts.length !== 0) {
+          const account = accounts[0];
+          console.log('Found an authorized account:', account);
+          setCurrentAccount(account);
+        } else {
+          console.log('No authorized account found');
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  /*
-   * This runs our function when the page loads.
-   */
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
