@@ -193,6 +193,14 @@ const App = () => {
             rel="noreferrer"
           >{`built with @${TWITTER_HANDLE}`}</a>
         </div>
+        <div className="footer-container">
+          <a
+            className="footer-text"
+            href="https://github.com/canriquez/epic-game-ui"
+            target="_blank"
+            rel="noreferrer"
+          >{`github repo @${"github.com/canriquez/epic-game-ui"}`}</a>
+        </div>
       </div>
     </div>
   );
