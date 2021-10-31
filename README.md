@@ -18,6 +18,9 @@ This is an async, weekend project for curious devs that want to learn more about
 - Solidity
 - VSCode
 
+## Features
+- [Hardhat](https://hardhat.org/) - Ethereum development environment for professionals
+- [OpenZeppelin](https://docs.openzeppelin.com/contracts/4.x/) - standard for secure blockchain applications
 ## Live Demo @Netlify
 
 [Live Demo Link](https://nft-game-anriquez.netlify.app/)
