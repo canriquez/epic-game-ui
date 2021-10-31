@@ -9,18 +9,19 @@
 
 .select-character-container .character-grid {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
-  grid-row-gap: 15px;
+  display: flex;
+  justify-content: space-around;
 }
 
-.character-grid .character-item {
+.character-item {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   position: relative;
   justify-self: center;
   align-self: center;
+  margin-left: 50px;
+  margin-right: 50px;
 }
 
 .character-item img {
@@ -56,4 +57,26 @@
   color: white;
   font-weight: bold;
   font-size: 16px;
+}
+
+.select-character-container .loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 75px;
+}
+
+.select-character-container .loading .indicator {
+  display: flex;
+}
+
+.select-character-container .loading .indicator p {
+  font-weight: bold;
+  font-size: 28px;
+  padding-left: 5px;
+}
+
+.select-character-container .loading img {
+  width: 450px;
+  padding-top: 25px;
 }

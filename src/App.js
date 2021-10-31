@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import Arena from './Components/Arena';
 import twitterLogo from './assets/twitter-logo.svg';
 import enderDragon from './assets/teleport-ender-dragon.gif';
+import SelectCharacter from './Components/SelectCharacter';
+import { CONTRACT_ADDRESS, transformCharacterData } from './constants';
+import myEpicGame from './utils/MyEpicGame.json';
+import { ethers } from 'ethers';
+import LoadingIndicator from './Components/LoadingIndicator';
+
 // Constants
 const TWITTER_HANDLE = 'cranriquez';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
@@ -11,6 +18,14 @@ const App = () => {
    * Just a state variable we use to store our user's public wallet. Don't forget to import useState.
    */
   const [currentAccount, setCurrentAccount] = useState(null);
+
+  const [characterNFT, setCharacterNFT] = useState(null);
+
+  /*
+  * New state property added here
+  */
+  const [isLoading, setIsLoading] = useState(false);
+  
 
   /*
    * Since this method will take some time, make sure to declare it as async
@@ -44,6 +59,44 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
+  };
+
+    // Render Methods
+  const renderContent = () => {
+
+    /*
+    * If the app is currently loading, just render out LoadingIndicator
+    */
+    if (isLoading) {
+      return <LoadingIndicator />;
+    }
+    /*
+    * Scenario #1
+    */
+    if (!currentAccount) {
+      return (
+        <div className="connect-wallet-container">
+          <img className="ender-dragon" src={enderDragon} alt="ender-dragon"/>
+          <button
+            className="cta-button connect-wallet-button"
+            onClick={connectWalletAction}
+          >
+            Connect Wallet To Get Started
+          </button>
+        </div>
+      );
+      /*
+      * Scenario #2
+      */
+    } else if (currentAccount && !characterNFT) {
+      return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
+      /*
+      * If there is a connected wallet and characterNFT, it's time to battle!
+      */
+    } else if (currentAccount && characterNFT) {
+      return <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />;
+    }
   };
 
   /*
@@ -76,8 +129,47 @@ const App = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     checkIfWalletIsConnected();
   }, []);
+
+    /*
+  * Add this useEffect right under the other useEffect where you are calling checkIfWalletIsConnected
+  */
+  useEffect(() => {
+    /*
+    * The function we will call that interacts with out smart contract
+    */
+    const fetchNFTMetadata = async () => {
+      console.log('Checking for Character NFT on address:', currentAccount);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const gameContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        myEpicGame.abi,
+        signer
+      );
+
+      const txn = await gameContract.checkIfUserHasNFT();
+      if (txn.name) {
+        console.log('User has character NFT');
+        setCharacterNFT(transformCharacterData(txn));
+      } else {
+        console.log('No character NFT found');
+      }
+
+      setIsLoading(false);
+    };
+
+    /*
+    * We only want to run this, if we have a connected wallet
+    */
+    if (currentAccount) {
+      console.log('CurrentAccount:', currentAccount);
+      fetchNFTMetadata();
+    }
+  }, [currentAccount]);
 
   return (
     <div className="App">
@@ -87,17 +179,10 @@ const App = () => {
           <p className="sub-text">Team up to free the Ender Metaverse from dragons!</p>
         </div>
         <div className="connect-wallet-container">
-          <img className="ender-dragon" src={enderDragon} alt="ender-dragon"/>
-            {/*
-             * Button that we will use to trigger wallet connect
-             * Don't forget to add the onClick event to call your method!
-             */}
-             <button
-              className="cta-button connect-wallet-button"
-              onClick={connectWalletAction}
-            >
-              Connect Wallet To Get Started
-            </button>
+          {/* This is where our button and image code used to be!
+          *	Remember we moved it into the render method.
+          */}
+          {renderContent()}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
